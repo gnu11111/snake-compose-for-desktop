@@ -80,7 +80,7 @@ class SnakeData(x: Int, y: Int) {
     var xv = 0
     var yv = 0
     var tailLength = SnakeGame.minimumTailLength
-    var snakeTiles = mutableListOf(SnakeTileData(px, py))
+    var snakeTiles = mutableListOf(SnakeTileData(x, y))
 
     fun update() {
         moveHead()
