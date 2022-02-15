@@ -8,7 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.KeyEvent
-import androidx.compose.ui.input.key.KeyEventType.Companion.KeyUp
+import androidx.compose.ui.input.key.KeyEventType.Companion.KeyDown
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.layout.onSizeChanged
@@ -35,18 +35,13 @@ class SnakeGame {
 
     fun update() {
         snake.update()
+        handleEatenApple()
+        calculateScore()
         updateGameObjects()
-        if ((apple.x == snake.px) && (apple.y == snake.py)) {
-            snake.tailLength++
-            apple.x = Random.nextInt(tiles)
-            apple.y = Random.nextInt(tiles)
-        }
-        score = snake.tailLength - minimumTailLength
-        highScore = max(score, highScore)
     }
 
     fun handleKeyEvent(event: KeyEvent): Boolean {
-        if (event.type == KeyUp)
+        if (event.type != KeyDown)
             return false
         when (event.key.keyCode) {
             116500987904 -> return true                     // Esc
@@ -56,6 +51,19 @@ class SnakeGame {
             159450660864 -> { snake.xv = -1; snake.yv = 0 } // Left
         }
         return false
+    }
+
+    private fun handleEatenApple() {
+        if ((apple.x == snake.px) && (apple.y == snake.py)) {
+            snake.tailLength++
+            apple.x = Random.nextInt(tiles)
+            apple.y = Random.nextInt(tiles)
+        }
+    }
+
+    private fun calculateScore() {
+        score = snake.tailLength - minimumTailLength
+        highScore = max(score, highScore)
     }
 
     private fun updateGameObjects() {
@@ -75,6 +83,12 @@ class SnakeData(x: Int, y: Int) {
     var snakeTiles = mutableListOf(SnakeTileData(px, py))
 
     fun update() {
+        moveHead()
+        handleCollision()
+        updateSnakeTiles()
+    }
+
+    private fun moveHead() {
         px += xv
         py += yv
         when {
@@ -83,7 +97,13 @@ class SnakeData(x: Int, y: Int) {
             (py < 0) -> py = SnakeGame.tiles - 1
             (py >= SnakeGame.tiles) -> py = 0
         }
+    }
+
+    private fun handleCollision() {
         snakeTiles.firstOrNull { (it.x == px) && (it.y == py) }?.let { tailLength = SnakeGame.minimumTailLength }
+    }
+
+    private fun updateSnakeTiles() {
         snakeTiles += SnakeTileData(px, py)
         while (snakeTiles.size > tailLength)
             snakeTiles.removeFirst()
