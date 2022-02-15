@@ -61,7 +61,7 @@ class SnakeGame {
     private fun updateGameObjects() {
         gameObjects.clear()
         gameObjects += apple
-        snake.snakeTiles.forEach { gameObjects += it }
+        gameObjects.addAll(snake.snakeTiles)
     }
 }
 
@@ -141,7 +141,7 @@ fun main() = application {
             Column {
                 Box(modifier = Modifier.fillMaxWidth().background(Color.Blue)) {
                     Text(
-                        "Score = ${game.score}, Highscore = ${game.highScore} ",
+                        "Score = ${game.score}, Highscore = ${game.highScore}",
                         color = Color.Cyan, modifier = Modifier.padding(8.dp)
                     )
                 }
