@@ -45,12 +45,6 @@ class SnakeGame {
         highScore = max(score, highScore)
     }
 
-    fun updateGameObjects() {
-        gameObjects.clear()
-        gameObjects += apple
-        snake.snakeTiles.forEach { gameObjects += it }
-    }
-
     fun handleKeyEvent(event: KeyEvent): Boolean {
         if (event.type == KeyUp)
             return false
@@ -62,6 +56,12 @@ class SnakeGame {
             159450660864 -> { snake.xv = -1; snake.yv = 0 } // Left
         }
         return false
+    }
+
+    private fun updateGameObjects() {
+        gameObjects.clear()
+        gameObjects += apple
+        snake.snakeTiles.forEach { gameObjects += it }
     }
 }
 
@@ -98,18 +98,18 @@ class SnakeTileData(x: Int, y: Int) : GameObject(x, y)
 class AppleData(x: Int, y: Int) : GameObject(x, y)
 
 @Composable
-fun SnakeTile(snakeTileData: SnakeTileData, scale: Pair<Float, Float> = Pair(20f, 20f)) =
+fun SnakeTile(snakeTileData: SnakeTileData, tileSize: Pair<Float, Float> = Pair(20f, 20f)) =
     Box(Modifier
-        .offset((snakeTileData.x * scale.first).dp, (snakeTileData.y * scale.second).dp)
-        .size(width = (scale.first - 2).dp, height = (scale.second - 2).dp)
+        .offset((snakeTileData.x * tileSize.first).dp, (snakeTileData.y * tileSize.second).dp)
+        .size(width = (tileSize.first - 2).dp, height = (tileSize.second - 2).dp)
         .background(Color.Green)
     )
 
 @Composable
-fun Apple(appleData: AppleData, scale: Pair<Float, Float> = Pair(20f, 20f)) =
+fun Apple(appleData: AppleData, tileSize: Pair<Float, Float> = Pair(20f, 20f)) =
     Box(Modifier
-        .offset((appleData.x * scale.first).dp, (appleData.y * scale.second).dp)
-        .size(width = (scale.first - 2).dp, height = (scale.second - 2).dp)
+        .offset((appleData.x * tileSize.first).dp, (appleData.y * tileSize.second).dp)
+        .size(width = (tileSize.first - 2).dp, height = (tileSize.second - 2).dp)
         .background(Color.Red)
     )
 
@@ -118,10 +118,9 @@ fun main() = application {
     val game = remember { SnakeGame() }
     val refreshTimeNanos = 83333333L
     var lastUpdate by mutableStateOf(0L)
-    var scale by mutableStateOf(Pair(0f, 0f))
+    var tileSize by mutableStateOf(Pair(20f, 20f))
 
     LaunchedEffect(Unit) {
-        game.updateGameObjects()
         while (true) {
             withFrameNanos {
                 if ((it - lastUpdate) > refreshTimeNanos) {
@@ -147,12 +146,12 @@ fun main() = application {
                     )
                 }
                 Box(modifier = Modifier.fillMaxSize().background(Color.Black).clipToBounds().onSizeChanged {
-                    scale = Pair(it.width.toFloat() / SnakeGame.tiles, it.height.toFloat() / SnakeGame.tiles)
+                    tileSize = Pair(it.width.toFloat() / SnakeGame.tiles, it.height.toFloat() / SnakeGame.tiles)
                 }) {
                     game.gameObjects.forEach {
                         when (it) {
-                            is AppleData -> Apple(it, scale)
-                            is SnakeTileData -> SnakeTile(it, scale)
+                            is AppleData -> Apple(it, tileSize)
+                            is SnakeTileData -> SnakeTile(it, tileSize)
                         }
                     }
                 }
