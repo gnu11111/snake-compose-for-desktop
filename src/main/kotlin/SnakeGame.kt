@@ -33,7 +33,7 @@ class SnakeGame {
 
     private val snake = SnakeData(areaSize / 2, areaSize / 2)
     private val apple = AppleData(areaSize * 2 / 3, areaSize * 2 / 3)
-    private var lastKey: Long = 0L
+    private var lastKey = 0L
 
     fun update() {
         handleInput()
@@ -46,10 +46,10 @@ class SnakeGame {
     private fun handleInput() {
         if (lastKey > 0L) {
             when (lastKey) {
-                163745628160 -> if (snake.direction != Direction.Down) snake.direction = Direction.Up
-                168040595456 -> if (snake.direction != Direction.Left) snake.direction = Direction.Right
-                172335562752 -> if (snake.direction != Direction.Up) snake.direction = Direction.Down
-                159450660864 -> if (snake.direction != Direction.Right) snake.direction = Direction.Left
+                163745628160L -> if (snake.direction != Direction.Down) snake.direction = Direction.Up
+                168040595456L -> if (snake.direction != Direction.Left) snake.direction = Direction.Right
+                172335562752L -> if (snake.direction != Direction.Up) snake.direction = Direction.Down
+                159450660864L -> if (snake.direction != Direction.Right) snake.direction = Direction.Left
             }
             lastKey = 0L
         }
