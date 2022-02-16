@@ -43,6 +43,13 @@ class SnakeGame {
         updateGameObjects()
     }
 
+    fun registerKeyEvent(event: KeyEvent): Boolean =
+        when {
+            (event.key.keyCode == 116500987904) -> true           // Escape
+            ((event.type != KeyDown) || (lastKey > 0L)) -> false
+            else -> { lastKey = event.key.keyCode; false }
+        }
+
     private fun handleInput() {
         if (lastKey > 0L) {
             when (lastKey) {
@@ -54,13 +61,6 @@ class SnakeGame {
             lastKey = 0L
         }
     }
-
-    fun registerKeyEvent(event: KeyEvent): Boolean =
-        when {
-            (event.key.keyCode == 116500987904) -> true           // Escape
-            ((event.type != KeyDown) || (lastKey > 0L)) -> false
-            else -> { lastKey = event.key.keyCode; false }
-        }
 
     private fun handleEatenApple() {
         if ((apple.x == snake.px) && (apple.y == snake.py)) {
