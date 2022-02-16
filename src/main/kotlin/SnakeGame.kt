@@ -100,7 +100,11 @@ class SnakeData(x: Int, y: Int) {
     }
 
     private fun handleCollision() =
-        tiles.firstOrNull { (it.x == px) && (it.y == py) }?.let { tailLength = SnakeGame.minimumTailLength }
+        tiles.firstOrNull { (it.x == px) && (it.y == py) }?.let {
+            xv = 0
+            yv = 0
+            tailLength = SnakeGame.minimumTailLength
+        }
 
     private fun updateTiles() {
         tiles += SnakeTileData(px, py)
