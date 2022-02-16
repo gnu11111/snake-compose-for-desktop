@@ -32,26 +32,34 @@ class SnakeGame {
 
     private val snake = SnakeData(areaSize / 2, areaSize / 2)
     private val apple = AppleData(areaSize * 2 / 3, areaSize * 2 / 3)
+    private var lastKey: Long = 0L
 
     fun update() {
+        handleInput()
         snake.update()
         handleEatenApple()
         calculateScore()
         updateGameObjects()
     }
 
-    fun handleKeyEvent(event: KeyEvent): Boolean {
-        if (event.type != KeyDown)
-            return false
-        when (event.key.keyCode) {
-            116500987904 -> return true                                        // Esc
-            163745628160 -> if (snake.yv == 0) { snake.xv = 0; snake.yv = -1 } // Up
-            168040595456 -> if (snake.xv == 0) { snake.xv = 1; snake.yv = 0 }  // Right
-            172335562752 -> if (snake.yv == 0) { snake.xv = 0; snake.yv = 1 }  // Down
-            159450660864 -> if (snake.xv == 0) { snake.xv = -1; snake.yv = 0 } // Left
+    private fun handleInput() {
+        if (lastKey > 0L) {
+            when (lastKey) {
+                163745628160 -> if (snake.yv == 0) { snake.xv = 0; snake.yv = -1 } // Up
+                168040595456 -> if (snake.xv == 0) { snake.xv = 1; snake.yv = 0 }  // Right
+                172335562752 -> if (snake.yv == 0) { snake.xv = 0; snake.yv = 1 }  // Down
+                159450660864 -> if (snake.xv == 0) { snake.xv = -1; snake.yv = 0 } // Left
+            }
+            lastKey = 0L
         }
-        return false
     }
+
+    fun registerKeyEvent(event: KeyEvent): Boolean =
+        when {
+            (event.key.keyCode == 116500987904) -> true           // Escape
+            ((event.type != KeyDown) || (lastKey > 0L)) -> false
+            else -> { lastKey = event.key.keyCode; false }
+        }
 
     private fun handleEatenApple() {
         if ((apple.x == snake.px) && (apple.y == snake.py)) {
@@ -160,7 +168,7 @@ fun main() = application {
         title = "SnakeGame",
         state = WindowState(width = 416.dp, height = 473.dp),
         onCloseRequest = ::exitApplication,
-        onKeyEvent = { if (game.handleKeyEvent(it)) { this.exitApplication(); true } else false }
+        onKeyEvent = { if (game.registerKeyEvent(it)) { this.exitApplication(); true } else false }
     ) {
         MaterialTheme {
             Column {
