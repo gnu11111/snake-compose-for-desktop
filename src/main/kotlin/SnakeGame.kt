@@ -1,4 +1,5 @@
 
+import Direction.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
@@ -44,11 +45,11 @@ class SnakeGame {
         if (event.type != KeyDown)
             return false
         when (event.key.keyCode) {
-            116500987904 -> return true                                        // Esc
-            163745628160 -> if (snake.yv == 0) { snake.xv = 0; snake.yv = -1 } // Up
-            168040595456 -> if (snake.xv == 0) { snake.xv = 1; snake.yv = 0 }  // Right
-            172335562752 -> if (snake.yv == 0) { snake.xv = 0; snake.yv = 1 }  // Down
-            159450660864 -> if (snake.xv == 0) { snake.xv = -1; snake.yv = 0 } // Left
+            116500987904 -> return true                                              // Esc
+            163745628160 -> if (snake.direction != DOWN) { snake.direction = UP }    // Up
+            168040595456 -> if (snake.direction != LEFT) { snake.direction = RIGHT } // Right
+            172335562752 -> if (snake.direction != UP) { snake.direction = DOWN }    // Down
+            159450660864 -> if (snake.direction != RIGHT) { snake.direction = LEFT } // Left
         }
         return false
     }
@@ -73,13 +74,16 @@ class SnakeGame {
     }
 }
 
+enum class Direction {
+    UP, DOWN, LEFT, RIGHT
+}
+
 class SnakeData(x: Int, y: Int) {
 
     val tiles = mutableListOf(SnakeTileData(x, y))
     var px = x
     var py = y
-    var xv = 0
-    var yv = 0
+    var direction: Direction? = null
     var tailLength = SnakeGame.minimumTailLength
 
     fun update() {
@@ -89,8 +93,12 @@ class SnakeData(x: Int, y: Int) {
     }
 
     private fun moveHead() {
-        px += xv
-        py += yv
+        when (direction) {
+            UP -> { py -= 1 }
+            DOWN -> { py += 1 }
+            LEFT -> { px -= 1 }
+            RIGHT -> { px += 1 }
+        }
         when {
             (px < 0) -> px = SnakeGame.areaSize - 1
             (px >= SnakeGame.areaSize) -> px = 0
@@ -101,8 +109,7 @@ class SnakeData(x: Int, y: Int) {
 
     private fun handleCollision() =
         tiles.firstOrNull { (it.x == px) && (it.y == py) }?.let {
-            xv = 0
-            yv = 0
+            direction = null
             tailLength = SnakeGame.minimumTailLength
         }
 
