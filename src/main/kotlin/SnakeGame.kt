@@ -1,4 +1,5 @@
 
+import SnakeData.Direction
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
@@ -45,10 +46,10 @@ class SnakeGame {
     private fun handleInput() {
         if (lastKey > 0L) {
             when (lastKey) {
-                163745628160 -> if (snake.yv == 0) { snake.xv = 0; snake.yv = -1 } // Up
-                168040595456 -> if (snake.xv == 0) { snake.xv = 1; snake.yv = 0 }  // Right
-                172335562752 -> if (snake.yv == 0) { snake.xv = 0; snake.yv = 1 }  // Down
-                159450660864 -> if (snake.xv == 0) { snake.xv = -1; snake.yv = 0 } // Left
+                163745628160 -> if (snake.direction != Direction.Down) snake.direction = Direction.Up
+                168040595456 -> if (snake.direction != Direction.Left) snake.direction = Direction.Right
+                172335562752 -> if (snake.direction != Direction.Up) snake.direction = Direction.Down
+                159450660864 -> if (snake.direction != Direction.Right) snake.direction = Direction.Left
             }
             lastKey = 0L
         }
@@ -83,12 +84,13 @@ class SnakeGame {
 
 class SnakeData(x: Int, y: Int) {
 
+    enum class Direction(val x: Int, val y: Int) { None(0, 0), Up(0, -1), Right(1, 0), Down(0, 1), Left(-1, 0) }
+
     val tiles = mutableListOf(SnakeTileData(x, y))
+    var direction: Direction = Direction.None
+    var tailLength = SnakeGame.minimumTailLength
     var px = x
     var py = y
-    var xv = 0
-    var yv = 0
-    var tailLength = SnakeGame.minimumTailLength
 
     fun update() {
         moveHead()
@@ -97,8 +99,8 @@ class SnakeData(x: Int, y: Int) {
     }
 
     private fun moveHead() {
-        px += xv
-        py += yv
+        px += direction.x
+        py += direction.y
         when {
             (px < 0) -> px = SnakeGame.areaSize - 1
             (px >= SnakeGame.areaSize) -> px = 0
@@ -109,8 +111,7 @@ class SnakeData(x: Int, y: Int) {
 
     private fun handleCollision() =
         tiles.firstOrNull { (it.x == px) && (it.y == py) }?.let {
-            xv = 0
-            yv = 0
+            direction = Direction.None
             tailLength = SnakeGame.minimumTailLength
         }
 
