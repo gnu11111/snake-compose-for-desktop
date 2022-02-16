@@ -46,10 +46,10 @@ class SnakeGame {
             return false
         when (event.key.keyCode) {
             116500987904 -> return true                                              // Esc
-            163745628160 -> if (snake.direction != DOWN) { snake.direction = UP }    // Up
-            168040595456 -> if (snake.direction != LEFT) { snake.direction = RIGHT } // Right
-            172335562752 -> if (snake.direction != UP) { snake.direction = DOWN }    // Down
-            159450660864 -> if (snake.direction != RIGHT) { snake.direction = LEFT } // Left
+            163745628160 -> if (snake.lastDirection != DOWN) { snake.direction = UP }    // Up
+            168040595456 -> if (snake.lastDirection != LEFT) { snake.direction = RIGHT } // Right
+            172335562752 -> if (snake.lastDirection != UP) { snake.direction = DOWN }    // Down
+            159450660864 -> if (snake.lastDirection != RIGHT) { snake.direction = LEFT } // Left
         }
         return false
     }
@@ -83,6 +83,7 @@ class SnakeData(x: Int, y: Int) {
     val tiles = mutableListOf(SnakeTileData(x, y))
     var px = x
     var py = y
+    var lastDirection: Direction? = null
     var direction: Direction? = null
     var tailLength = SnakeGame.minimumTailLength
 
@@ -93,6 +94,7 @@ class SnakeData(x: Int, y: Int) {
     }
 
     private fun moveHead() {
+        lastDirection = direction
         when (direction) {
             UP -> { py -= 1 }
             DOWN -> { py += 1 }
