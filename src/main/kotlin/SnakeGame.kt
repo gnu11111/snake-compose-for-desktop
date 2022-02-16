@@ -108,8 +108,10 @@ class SnakeData(x: Int, y: Int) {
 
     private fun updateTiles() {
         tiles += SnakeTileData(px, py)
-        while (tiles.size > tailLength)
-            tiles.removeFirst()
+        repeat(2) {
+            if (tiles.size > tailLength)
+                tiles.removeFirst()
+        }
     }
 }
 
