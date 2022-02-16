@@ -22,7 +22,7 @@ import kotlin.random.Random
 class SnakeGame {
 
     companion object {
-        const val tiles = 20
+        const val areaSize = 20
         const val minimumTailLength = 5
     }
 
@@ -30,8 +30,8 @@ class SnakeGame {
     var score = 0
     var highScore = 0
 
-    private val snake = SnakeData(tiles / 2, tiles / 2)
-    private val apple = AppleData(tiles * 2 / 3, tiles * 2 / 3)
+    private val snake = SnakeData(areaSize / 2, areaSize / 2)
+    private val apple = AppleData(areaSize * 2 / 3, areaSize * 2 / 3)
 
     fun update() {
         snake.update()
@@ -56,8 +56,8 @@ class SnakeGame {
     private fun handleEatenApple() {
         if ((apple.x == snake.px) && (apple.y == snake.py)) {
             snake.tailLength++
-            apple.x = Random.nextInt(tiles)
-            apple.y = Random.nextInt(tiles)
+            apple.x = Random.nextInt(areaSize)
+            apple.y = Random.nextInt(areaSize)
         }
     }
 
@@ -69,44 +69,43 @@ class SnakeGame {
     private fun updateGameObjects() {
         gameObjects.clear()
         gameObjects += apple
-        gameObjects.addAll(snake.snakeTiles)
+        gameObjects.addAll(snake.tiles)
     }
 }
 
 class SnakeData(x: Int, y: Int) {
 
+    val tiles = mutableListOf(SnakeTileData(x, y))
     var px = x
     var py = y
     var xv = 0
     var yv = 0
     var tailLength = SnakeGame.minimumTailLength
-    var snakeTiles = mutableListOf(SnakeTileData(x, y))
 
     fun update() {
         moveHead()
         handleCollision()
-        updateSnakeTiles()
+        updateTiles()
     }
 
     private fun moveHead() {
         px += xv
         py += yv
         when {
-            (px < 0) -> px = SnakeGame.tiles - 1
-            (px >= SnakeGame.tiles) -> px = 0
-            (py < 0) -> py = SnakeGame.tiles - 1
-            (py >= SnakeGame.tiles) -> py = 0
+            (px < 0) -> px = SnakeGame.areaSize - 1
+            (px >= SnakeGame.areaSize) -> px = 0
+            (py < 0) -> py = SnakeGame.areaSize - 1
+            (py >= SnakeGame.areaSize) -> py = 0
         }
     }
 
-    private fun handleCollision() {
-        snakeTiles.firstOrNull { (it.x == px) && (it.y == py) }?.let { tailLength = SnakeGame.minimumTailLength }
-    }
+    private fun handleCollision() =
+        tiles.firstOrNull { (it.x == px) && (it.y == py) }?.let { tailLength = SnakeGame.minimumTailLength }
 
-    private fun updateSnakeTiles() {
-        snakeTiles += SnakeTileData(px, py)
-        while (snakeTiles.size > tailLength)
-            snakeTiles.removeFirst()
+    private fun updateTiles() {
+        tiles += SnakeTileData(px, py)
+        while (tiles.size > tailLength)
+            tiles.removeFirst()
     }
 }
 
@@ -166,7 +165,7 @@ fun main() = application {
                     )
                 }
                 Box(modifier = Modifier.fillMaxSize().background(Color.Black).clipToBounds().onSizeChanged {
-                    tileSize = Pair(it.width.toFloat() / SnakeGame.tiles, it.height.toFloat() / SnakeGame.tiles)
+                    tileSize = Pair(it.width.toFloat() / SnakeGame.areaSize, it.height.toFloat() / SnakeGame.areaSize)
                 }) {
                     game.gameObjects.forEach {
                         when (it) {
