@@ -44,11 +44,11 @@ class SnakeGame {
         if (event.type != KeyDown)
             return false
         when (event.key.keyCode) {
-            116500987904 -> return true                     // Esc
-            163745628160 -> { snake.xv = 0; snake.yv = -1 } // Up
-            168040595456 -> { snake.xv = 1; snake.yv = 0 }  // Right
-            172335562752 -> { snake.xv = 0; snake.yv = 1 }  // Down
-            159450660864 -> { snake.xv = -1; snake.yv = 0 } // Left
+            116500987904 -> return true                                        // Esc
+            163745628160 -> if (snake.yv == 0) { snake.xv = 0; snake.yv = -1 } // Up
+            168040595456 -> if (snake.xv == 0) { snake.xv = 1; snake.yv = 0 }  // Right
+            172335562752 -> if (snake.yv == 0) { snake.xv = 0; snake.yv = 1 }  // Down
+            159450660864 -> if (snake.xv == 0) { snake.xv = -1; snake.yv = 0 } // Left
         }
         return false
     }
