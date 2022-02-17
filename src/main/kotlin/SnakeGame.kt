@@ -27,6 +27,12 @@ class SnakeGame {
         const val minimumTailLength = 5
     }
 
+    enum class Key(val code: Long) {
+        None(0L), Esc(116500987904L), Up(163745628160L), Right(168040595456L), Down(172335562752L), Left(159450660864L);
+        infix fun isNot(lastKey: Long): Boolean = (this.code != lastKey)
+        infix fun isEqualTo(lastKey: Long): Boolean = (this.code == lastKey)
+    }
+
     val gameObjects = mutableStateListOf<GameObject>()
     var score = 0
     var highScore = 0
@@ -45,21 +51,21 @@ class SnakeGame {
 
     fun registerKeyEvent(event: KeyEvent): Boolean = synchronized(this) {
         when {
-            (event.key.keyCode == 116500987904) -> true           // Escape
-            ((event.type != KeyDown) || (lastKey > 0L)) -> false
+            (Key.Esc isEqualTo event.key.keyCode) -> true
+            ((event.type != KeyDown) || (Key.None isNot lastKey)) -> false
             else -> { lastKey = event.key.keyCode; false }
         }
     }
 
     private fun handleInput() = synchronized(this) {
-        if (lastKey > 0L) {
+        if (Key.None isNot lastKey) {
             when (lastKey) {
-                163745628160L -> if (snake.direction != Direction.Down) snake.direction = Direction.Up
-                168040595456L -> if (snake.direction != Direction.Left) snake.direction = Direction.Right
-                172335562752L -> if (snake.direction != Direction.Up) snake.direction = Direction.Down
-                159450660864L -> if (snake.direction != Direction.Right) snake.direction = Direction.Left
+                Key.Up.code -> if (snake.direction != Direction.Down) snake.direction = Direction.Up
+                Key.Right.code -> if (snake.direction != Direction.Left) snake.direction = Direction.Right
+                Key.Down.code -> if (snake.direction != Direction.Up) snake.direction = Direction.Down
+                Key.Left.code -> if (snake.direction != Direction.Right) snake.direction = Direction.Left
             }
-            lastKey = 0L
+            lastKey = Key.None.code
         }
     }
 
