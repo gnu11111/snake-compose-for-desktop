@@ -43,14 +43,15 @@ class SnakeGame {
         updateGameObjects()
     }
 
-    fun registerKeyEvent(event: KeyEvent): Boolean =
+    fun registerKeyEvent(event: KeyEvent): Boolean = synchronized(this) {
         when {
             (event.key.keyCode == 116500987904) -> true           // Escape
             ((event.type != KeyDown) || (lastKey > 0L)) -> false
             else -> { lastKey = event.key.keyCode; false }
         }
+    }
 
-    private fun handleInput() {
+    private fun handleInput() = synchronized(this) {
         if (lastKey > 0L) {
             when (lastKey) {
                 163745628160L -> if (snake.direction != Direction.Down) snake.direction = Direction.Up
