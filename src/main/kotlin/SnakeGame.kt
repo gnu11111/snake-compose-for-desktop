@@ -96,7 +96,7 @@ class SnakeData(x: Int, y: Int) {
     enum class Direction(val x: Int, val y: Int) { None(0, 0), Up(0, -1), Right(1, 0), Down(0, 1), Left(-1, 0) }
 
     val tiles = mutableListOf(SnakeTileData(x, y))
-    var direction: Direction = Direction.None
+    var direction = Direction.None
     var tailLength = SnakeGame.minimumTailLength
     var px = x
     var py = y
