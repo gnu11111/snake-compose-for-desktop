@@ -29,8 +29,9 @@ class SnakeGame {
 
     enum class Key(val code: Long) {
         None(0L), Esc(116500987904L), Up(163745628160L), Right(168040595456L), Down(172335562752L), Left(159450660864L);
-        infix fun isNot(lastKey: Long): Boolean = (this.code != lastKey)
-        infix fun isEqualTo(lastKey: Long): Boolean = (this.code == lastKey)
+        companion object {
+            fun of(code: Long) = values().firstOrNull { it.code == code } ?: None
+        }
     }
 
     val gameObjects = mutableStateListOf<GameObject>()
@@ -39,7 +40,7 @@ class SnakeGame {
 
     private val snake = SnakeData(areaSize / 2, areaSize / 2)
     private val apple = AppleData(areaSize * 2 / 3, areaSize * 2 / 3)
-    private var lastKey = 0L
+    private var lastKey = Key.None
 
     fun update() {
         handleInput()
@@ -51,21 +52,22 @@ class SnakeGame {
 
     fun registerKeyEvent(event: KeyEvent): Boolean = synchronized(this) {
         when {
-            (Key.Esc isEqualTo event.key.keyCode) -> true
-            ((event.type != KeyDown) || (Key.None isNot lastKey)) -> false
-            else -> { lastKey = event.key.keyCode; false }
+            (Key.Esc.code == event.key.keyCode) -> true
+            ((event.type != KeyDown) || (lastKey != Key.None)) -> false
+            else -> { lastKey = Key.of(event.key.keyCode); false }
         }
     }
 
     private fun handleInput() = synchronized(this) {
-        if (Key.None isNot lastKey) {
+        if (lastKey != Key.None) {
             when (lastKey) {
-                Key.Up.code -> if (snake.direction != Direction.Down) snake.direction = Direction.Up
-                Key.Right.code -> if (snake.direction != Direction.Left) snake.direction = Direction.Right
-                Key.Down.code -> if (snake.direction != Direction.Up) snake.direction = Direction.Down
-                Key.Left.code -> if (snake.direction != Direction.Right) snake.direction = Direction.Left
+                Key.Up -> if (snake.direction != Direction.Down) snake.direction = Direction.Up
+                Key.Right -> if (snake.direction != Direction.Left) snake.direction = Direction.Right
+                Key.Down -> if (snake.direction != Direction.Up) snake.direction = Direction.Down
+                Key.Left -> if (snake.direction != Direction.Right) snake.direction = Direction.Left
+                else -> error("don't know how to handle $lastKey")
             }
-            lastKey = Key.None.code
+            lastKey = Key.None
         }
     }
 
