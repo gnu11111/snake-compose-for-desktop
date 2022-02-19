@@ -82,8 +82,10 @@ class SnakeGame {
     }
 
     private fun calculateScore() {
-        score = snake.tailLength - minimumTailLength
-        highScore = max(score, highScore)
+        if (snake.direction != Direction.None) {
+            score = snake.tailLength - minimumTailLength
+            highScore = max(score, highScore)
+        }
     }
 
     private fun updateGameObjects() {
