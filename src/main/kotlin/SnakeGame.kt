@@ -13,6 +13,8 @@ import androidx.compose.ui.input.key.KeyEventType.Companion.KeyDown
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowState
@@ -141,27 +143,28 @@ class SnakeTileData(x: Int, y: Int) : GameObject(x, y)
 class AppleData(x: Int, y: Int) : GameObject(x, y)
 
 @Composable
-fun SnakeTile(snakeTileData: SnakeTileData, tileSize: Pair<Float, Float> = Pair(20f, 20f)) =
+fun SnakeTile(snakeTileData: SnakeTileData, tileSize: Pair<Dp, Dp> = Pair(20.dp, 20.dp)) =
     Box(Modifier
-        .offset((snakeTileData.x * tileSize.first).dp, (snakeTileData.y * tileSize.second).dp)
-        .size(width = (tileSize.first - 2).dp, height = (tileSize.second - 2).dp)
+        .offset(tileSize.first * snakeTileData.x, tileSize.second * snakeTileData.y)
+        .size(width = tileSize.first - 2.dp, height = tileSize.second - 2.dp)
         .background(Color.Green)
     )
 
 @Composable
-fun Apple(appleData: AppleData, tileSize: Pair<Float, Float> = Pair(20f, 20f)) =
+fun Apple(appleData: AppleData, tileSize: Pair<Dp, Dp> = Pair(20.dp, 20.dp)) =
     Box(Modifier
-        .offset((appleData.x * tileSize.first).dp, (appleData.y * tileSize.second).dp)
-        .size(width = (tileSize.first - 2).dp, height = (tileSize.second - 2).dp)
+        .offset(tileSize.first * appleData.x, tileSize.second * appleData.y)
+        .size(width = tileSize.first - 2.dp, height = tileSize.second - 2.dp)
         .background(Color.Red)
     )
 
 fun main() = application {
 
     val game = remember { SnakeGame() }
+    val density = LocalDensity.current
     val refreshTimeNanos = 83333333L
     var lastUpdate by mutableStateOf(0L)
-    var tileSize by mutableStateOf(Pair(20f, 20f))
+    var tileSize by mutableStateOf(Pair(20.dp, 20.dp))
 
     LaunchedEffect(Unit) {
         while (true) {
@@ -189,7 +192,9 @@ fun main() = application {
                     )
                 }
                 Box(modifier = Modifier.fillMaxSize().background(Color.Black).clipToBounds().onSizeChanged {
-                    tileSize = Pair(it.width.toFloat() / SnakeGame.areaSize, it.height.toFloat() / SnakeGame.areaSize)
+                    with (density) {
+                        tileSize = Pair(it.width.toDp() / SnakeGame.areaSize, it.height.toDp() / SnakeGame.areaSize)
+                    }
                 }) {
                     game.gameObjects.forEach {
                         when (it) {
