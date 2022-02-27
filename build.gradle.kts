@@ -34,3 +34,21 @@ compose.desktop {
         }
     }
 }
+
+val fatJar = task("fatJar", type = Jar::class) {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    archiveBaseName.set("${project.name}-executable")
+    manifest {
+        attributes["Implementation-Title"] = "SnakeGame"
+        attributes["Implementation-Version"] = archiveVersion
+        attributes["Main-Class"] = "SnakeGameKt"
+    }
+    from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
+    with(tasks.jar.get() as CopySpec)
+}
+
+tasks {
+    "build" {
+        dependsOn(fatJar)
+    }
+}
