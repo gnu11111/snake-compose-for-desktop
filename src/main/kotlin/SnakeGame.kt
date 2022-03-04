@@ -37,10 +37,10 @@ class SnakeGame {
     }
 
     val gameObjects = mutableStateListOf<GameObject>()
+    val snake = SnakeData(areaSize / 2, areaSize / 2)
     var score = 0
     var highScore = 0
 
-    private val snake = SnakeData(areaSize / 2, areaSize / 2)
     private val apple = AppleData(areaSize * 2 / 3, areaSize * 2 / 3)
     private var lastKey = Key.None
 
@@ -145,11 +145,11 @@ class SnakeTileData(x: Int, y: Int) : GameObject(x, y)
 class AppleData(x: Int, y: Int) : GameObject(x, y)
 
 @Composable
-fun SnakeTile(snakeTileData: SnakeTileData, tileSize: Pair<Dp, Dp> = Pair(20.dp, 20.dp)) =
+fun SnakeTile(snakeTileData: SnakeTileData, tileSize: Pair<Dp, Dp> = Pair(20.dp, 20.dp), color: Color = Color.Green) =
     Box(Modifier
         .offset(tileSize.first * snakeTileData.x, tileSize.second * snakeTileData.y)
         .size(width = tileSize.first - 2.dp, height = tileSize.second - 2.dp)
-        .background(Color.Green)
+        .background(color)
     )
 
 @Composable
@@ -201,7 +201,14 @@ fun main() = application {
                     game.gameObjects.forEach {
                         when (it) {
                             is AppleData -> Apple(it, tileSize)
-                            is SnakeTileData -> SnakeTile(it, tileSize)
+                            is SnakeTileData -> {
+                                val color = when {
+                                    (game.snake.tailLength < game.snake.tiles.size) -> Color.Gray
+                                    (it === game.gameObjects.last()) -> Color.Yellow
+                                    else -> Color.Green
+                                }
+                                SnakeTile(it, tileSize, color)
+                            }
                         }
                     }
                 }
