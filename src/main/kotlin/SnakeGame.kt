@@ -56,7 +56,7 @@ class SnakeGame {
         when {
             (Key.Esc.code == event.key.keyCode) -> true
             ((event.type != KeyDown) || (lastKey != Key.None)) -> false
-            else -> { lastKey = Key.of(event.key.keyCode); false }
+            else -> let { lastKey = Key.of(event.key.keyCode); false }
         }
     }
 
