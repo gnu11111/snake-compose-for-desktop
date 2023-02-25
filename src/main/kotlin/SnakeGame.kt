@@ -74,7 +74,7 @@ class SnakeGame {
     }
 
     private fun handleEatenApple() {
-        if ((apple.x == snake.px) && (apple.y == snake.py)) {
+        if ((apple.x == snake.x) && (apple.y == snake.y)) {
             snake.tailLength++
             apple.x = Random.nextInt(areaSize)
             apple.y = Random.nextInt(areaSize)
@@ -95,15 +95,13 @@ class SnakeGame {
     }
 }
 
-class SnakeData(x: Int, y: Int) {
+class SnakeData(var x: Int, var y: Int) {
 
-    enum class Direction(val x: Int, val y: Int) { None(0, 0), Up(0, -1), Right(1, 0), Down(0, 1), Left(-1, 0) }
+    enum class Direction(val dx: Int, val dy: Int) { None(0, 0), Up(0, -1), Right(1, 0), Down(0, 1), Left(-1, 0) }
 
     val tiles = mutableListOf(SnakeTileData(x, y))
     var direction = Direction.None
     var tailLength = SnakeGame.minimumTailLength
-    var px = x
-    var py = y
 
     fun update() {
         moveHead()
@@ -112,24 +110,24 @@ class SnakeData(x: Int, y: Int) {
     }
 
     private fun moveHead() {
-        px += direction.x
-        py += direction.y
+        x += direction.dx
+        y += direction.dy
         when {
-            (px < 0) -> px = SnakeGame.areaSize - 1
-            (px >= SnakeGame.areaSize) -> px = 0
-            (py < 0) -> py = SnakeGame.areaSize - 1
-            (py >= SnakeGame.areaSize) -> py = 0
+            (x < 0) -> x = SnakeGame.areaSize - 1
+            (x >= SnakeGame.areaSize) -> x = 0
+            (y < 0) -> y = SnakeGame.areaSize - 1
+            (y >= SnakeGame.areaSize) -> y = 0
         }
     }
 
     private fun handleCollision() =
-        tiles.firstOrNull { (it.x == px) && (it.y == py) }?.let {
+        tiles.firstOrNull { (it.x == x) && (it.y == y) }?.let {
             direction = Direction.None
             tailLength = SnakeGame.minimumTailLength
         }
 
     private fun updateTiles() {
-        tiles += SnakeTileData(px, py)
+        tiles += SnakeTileData(x, y)
         repeat(2) {
             if (tiles.size > tailLength)
                 tiles.removeFirst()
