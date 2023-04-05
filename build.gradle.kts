@@ -2,21 +2,25 @@ import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.8.0"
-    id("org.jetbrains.compose") version "1.3.0"
+    kotlin("jvm") version "1.8.10"
+    id("org.jetbrains.compose") version "1.3.1"
 }
 
 group = "test.compose"
 version = "1.0"
 
 repositories {
-    google()
     mavenCentral()
     maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
+    google()
 }
 
 dependencies {
     implementation(compose.desktop.currentOs)
+}
+
+java {
+    toolchain.languageVersion.set(JavaLanguageVersion.of(11))
 }
 
 tasks.withType<KotlinCompile> {
