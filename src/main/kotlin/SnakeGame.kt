@@ -25,8 +25,8 @@ import kotlin.random.Random
 class SnakeGame {
 
     companion object {
-        const val areaSize = 20
-        const val minimumTailLength = 5
+        const val AREA_SIZE = 20
+        const val MINIMUM_TAIL_LENGTH = 5
     }
 
     enum class Key(val code: Long) {
@@ -37,11 +37,11 @@ class SnakeGame {
     }
 
     val gameObjects = mutableStateListOf<GameObject>()
-    val snake = SnakeData(areaSize / 2, areaSize / 2)
+    val snake = SnakeData(AREA_SIZE / 2, AREA_SIZE / 2)
     var score = 0
     var highScore = 0
 
-    private val apple = AppleData(areaSize * 2 / 3, areaSize * 2 / 3)
+    private val apple = AppleData(AREA_SIZE * 2 / 3, AREA_SIZE * 2 / 3)
     private var lastKey = Key.None
 
     fun update() {
@@ -76,14 +76,14 @@ class SnakeGame {
     private fun handleEatenApple() {
         if ((apple.x == snake.x) && (apple.y == snake.y)) {
             snake.tailLength++
-            apple.x = Random.nextInt(areaSize)
-            apple.y = Random.nextInt(areaSize)
+            apple.x = Random.nextInt(AREA_SIZE)
+            apple.y = Random.nextInt(AREA_SIZE)
         }
     }
 
     private fun calculateScore() {
         if (snake.direction != Direction.None) {
-            score = snake.tailLength - minimumTailLength
+            score = snake.tailLength - MINIMUM_TAIL_LENGTH
             highScore = max(score, highScore)
         }
     }
@@ -101,7 +101,7 @@ class SnakeData(var x: Int, var y: Int) {
 
     val tiles = mutableListOf(SnakeTileData(x, y))
     var direction = Direction.None
-    var tailLength = SnakeGame.minimumTailLength
+    var tailLength = SnakeGame.MINIMUM_TAIL_LENGTH
 
     fun update() {
         moveHead()
@@ -113,17 +113,17 @@ class SnakeData(var x: Int, var y: Int) {
         x += direction.dx
         y += direction.dy
         when {
-            (x < 0) -> x = SnakeGame.areaSize - 1
-            (x >= SnakeGame.areaSize) -> x = 0
-            (y < 0) -> y = SnakeGame.areaSize - 1
-            (y >= SnakeGame.areaSize) -> y = 0
+            (x < 0) -> x = SnakeGame.AREA_SIZE - 1
+            (x >= SnakeGame.AREA_SIZE) -> x = 0
+            (y < 0) -> y = SnakeGame.AREA_SIZE - 1
+            (y >= SnakeGame.AREA_SIZE) -> y = 0
         }
     }
 
     private fun handleCollision() =
         tiles.firstOrNull { (it.x == x) && (it.y == y) }?.let {
             direction = Direction.None
-            tailLength = SnakeGame.minimumTailLength
+            tailLength = SnakeGame.MINIMUM_TAIL_LENGTH
         }
 
     private fun updateTiles() {
@@ -193,7 +193,7 @@ fun main() = application {
                 }
                 Box(modifier = Modifier.fillMaxSize().background(Color.Black).clipToBounds().onSizeChanged {
                     with (density) {
-                        tileSize = Pair(it.width.toDp() / SnakeGame.areaSize, it.height.toDp() / SnakeGame.areaSize)
+                        tileSize = Pair(it.width.toDp() / SnakeGame.AREA_SIZE, it.height.toDp() / SnakeGame.AREA_SIZE)
                     }
                 }) {
                     game.gameObjects.forEach {
