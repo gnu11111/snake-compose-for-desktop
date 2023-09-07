@@ -2,8 +2,8 @@ import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.8.20"
-    id("org.jetbrains.compose") version "1.4.1"
+    kotlin("jvm") version "1.9.0"
+    id("org.jetbrains.compose") version "1.5.0"
 }
 
 group = "test.compose"

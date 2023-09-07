@@ -19,7 +19,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.application
-import kotlin.math.max
 import kotlin.random.Random
 
 class SnakeGame {
@@ -32,7 +31,7 @@ class SnakeGame {
     enum class Key(val code: Long) {
         None(0L), Esc(116500987904L), Up(163745628160L), Right(168040595456L), Down(172335562752L), Left(159450660864L);
         companion object {
-            fun of(code: Long) = values().firstOrNull { it.code == code } ?: None
+            fun of(code: Long) = entries.firstOrNull { it.code == code } ?: None
         }
     }
 
@@ -84,7 +83,7 @@ class SnakeGame {
     private fun calculateScore() {
         if (snake.direction != Direction.None) {
             score = snake.tailLength - MINIMUM_TAIL_LENGTH
-            highScore = max(score, highScore)
+            highScore = score.coerceAtLeast(highScore)
         }
     }
 
